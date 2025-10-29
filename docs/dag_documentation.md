@@ -1,6 +1,6 @@
-## 1 Apache Airflow DAG Development
+# 1 Apache Airflow DAG Development
 
-# Note: Airflow setup is explained in README.md!!
+## Note: Airflow setup is explained in README.md!!
 
 ## 1.1 DAG Configuration
 
@@ -38,20 +38,20 @@
     /daily-visits
     /ga-sessions-data
 
-    The responses are converted to JSON files and stored both locally and in a GCS landing bucket.
+* The responses are converted to JSON files and stored both locally and in a GCS landing bucket.
 
-* Load (Raw Layer)
-    Raw JSON data is directly ingested into BigQuery raw tables (raw_daily_visits and raw_ga_sessions) using the load_to_bigquery() function inside the Python script.
+* Load (Raw Layer) — 
+     Raw JSON data is directly ingested into BigQuery raw tables (raw_daily_visits and raw_ga_sessions) using the load_to_bigquery() function inside the Python script.
 
-* Transform (Staging Layer)
+* Transform (Staging Layer) — 
     Transformation SQL scripts flatten and validate the JSON structure, producing structured staging tables (stg_*) while pushing bad or duplicate records into reject tables.
 
-* Merge (Mart Layer)
+* Merge (Mart Layer) — 
     Final clean and validated data from staging is merged incrementally into mart tables for analytics and reporting.
 
 ## 1.3.2 Tasks
 
-# Task 1 — Extract & Load Raw Data
+## Task 1 — Extract & Load Raw Data
 
 * Operator: PythonOperator
 * Task ID: extract_and_load_raw_data
@@ -68,16 +68,16 @@
 * Loads the same raw JSON data into BigQuery raw tables using the BigQuery client library.
 
 * Parameters passed:
-    Dynamic runtime arguments — start_date and end_date — are passed from Airflow at execution time
+    Dynamic runtime arguments — start_date and end_date are passed from Airflow at execution time
 
 * Output:
-    raw.raw_daily_visits
+    raw.raw_daily_visits —
     raw.raw_ga_sessions
 
 * Purpose:
     Acts as the data ingestion layer for both APIs, ensuring that all source data is safely stored before transformation
 
-# Task 2 — Transform Raw-->Stage (Daily Visits)
+## Task 2 — Transform Raw-->Stage (Daily Visits)
 
 * Operator: BigQueryInsertJobOperator
 * Task ID: raw2stg_daily_visits
@@ -85,12 +85,12 @@
     Executes SQL script:
     /opt/airflow/sql/raw_to_stg_daily_visits.sql
 * This SQL:
-    Flattens simple JSON from raw_daily_visits
-    Validates mandatory fields (e.g., visit_date)
-    Rejects null or invalid records into stg_reject_daily_visits
+    Flattens simple JSON from raw_daily_visits.
+    Validates mandatory fields (e.g., visit_date).
+    Rejects null or invalid records into stg_reject_daily_visits.
     Inserts clean data into stg_daily_visits
 * Output Tables:
-    stage.stg_daily_visits
+    stage.stg_daily_visits — 
     stage.stg_reject_daily_visits
 
 ## Task 3 — Transform Raw --> Stage (GA Sessions)
@@ -101,12 +101,12 @@
     Executes:
     /opt/airflow/sql/raw_to_stg_ga_sessions.sql   
 * This is a more complex transformation:
-    Parses and flattens nested JSON (session-level attributes).
+    Parses and flattens nested JSON (session-level attributes). 
     Validates mandatory keys (fullVisitorId, date, visitId).
     Deduplicates based on primary keys.
     Pushes invalid or duplicate records into stg_reject_ga_sessions.
 * Output Tables:
-    stage.stg_ga_sessions
+    stage.stg_ga_sessions — 
     stage.stg_reject_ga_sessions
 
 ## Task 4 — Transform Raw --> Stage (GA Hits)
@@ -213,23 +213,23 @@ The focus is on ensuring data accuracy, completeness, compliance, and observabil
 
 ## Alerting & Monitoring Mechanisms
 
-* Airflow Failure Alerts
+* Airflow Failure Alerts:
     Implemented via custom notify_failure() callback in the DAG
     Sends email with DAG name, task ID, and timestamp on failure
-* Airflow UI & Logs
+* Airflow UI & Logs:
     Full transparency for task-level logs, run durations, and retries
-* BigQuery Job Monitoring
+* BigQuery Job Monitoring:
     All transformation queries are executed via BigQueryInsertJobOperator which automatically tracks job completion and errors in BigQuery Job History
 
 ## 2.2 Data Governance & Compliance
 
 ## Data Lineage Tracking
 
-* Pipeline Lineage (Airflow DAG)
+* Pipeline Lineage (Airflow DAG):
     Airflow DAG visually documents the full lineage: API --> GCS --> BigQuery Raw --> Stage --> Mart
-* Table Lineage (BigQuery)
+* Table Lineage (BigQuery):
     Each record carries metadata (record_id, load_timestamp, source_endpoint) enabling full traceability
-* Transformation Lineage (SQL)
+* Transformation Lineage (SQL):
     Each SQL script is version-controlled under /sql representing logical data flow
 
 ## Metadata Management
@@ -247,15 +247,15 @@ The focus is on ensuring data accuracy, completeness, compliance, and observabil
 * Encryption --> GCP-managed encryption at rest and in transit (HTTPS/IAM)
 * Audit Logging --> BigQuery and GCS access logs enabled for compliance
 * PII Handling
-    The API extraction layer (data_pipeline.py) only requests required business attributes such as visitId, total_visits, etc
-    PII (e.g. names, emails, IP addresses, phone numbers) is never collected unless explicitly required for analytics
-    If the source system ever contains PII (e.g. user_id, ip_address), it would be tokenized before loading into any analytical environment
+    The API extraction layer (data_pipeline.py) only requests required business attributes such as visitId, total_visits, etc.
+    PII (e.g. names, emails, IP addresses, phone numbers) is never collected unless explicitly required for analytics.
+    If the source system ever contains PII (e.g. user_id, ip_address), it would be tokenized before loading into any analytical environment.
 
 ## Documentation & Cataloging Practices
 
-* Version-Controlled SQL Scripts
+* Version-Controlled SQL Scripts:
     All transformations (raw_to_stg_*.sql, merge_mart_*.sql) are tracked in Git
-* Airflow DAGs
+* Airflow DAGs:
     DAGs serve as living documentation of workflow dependencies
-* README Documentation
+* README Documentation:
     Document in README. Details such as architecture, flow, and governance design
