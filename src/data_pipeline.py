@@ -1,6 +1,7 @@
 import os
 import json
 import time
+import argparse
 import uuid
 import logging
 import requests
@@ -170,4 +171,10 @@ def extract_to_raw(start_date: str, end_date: str):
 # ============================================================
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s")
-    extract_to_raw("2016-08-01", "2016-08-05")
+    
+    parser = argparse.ArgumentParser(description="Extract data from Dish API and load to BigQuery raw layer.")
+    parser.add_argument("--start_date", required=True, help="Start date in YYYY-MM-DD format")
+    parser.add_argument("--end_date", required=True, help="End date in YYYY-MM-DD format")
+    args = parser.parse_args()
+
+    extract_to_raw(args.start_date, args.end_date)

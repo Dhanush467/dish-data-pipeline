@@ -1,0 +1,64 @@
+{
+  "records": [
+    {
+      "total_visits": 2966,
+      "visit_date": "2016-08-15"
+    },
+    {
+      "total_visits": 1650,
+      "visit_date": "2016-08-14"
+    },
+    {
+      "total_visits": 1696,
+      "visit_date": "2016-08-13"
+    },
+    {
+      "total_visits": 2701,
+      "visit_date": "2016-08-12"
+    },
+    {
+      "total_visits": 2653,
+      "visit_date": "2016-08-11"
+    },
+    {
+      "total_visits": 2858,
+      "visit_date": "2016-08-10"
+    },
+    {
+      "total_visits": 2805,
+      "visit_date": "2016-08-09"
+    },
+    {
+      "total_visits": 2714,
+      "visit_date": "2016-08-08"
+    },
+    {
+      "total_visits": 1524,
+      "visit_date": "2016-08-07"
+    },
+    {
+      "total_visits": 1708,
+      "visit_date": "2016-08-06"
+    },
+    {
+      "total_visits": 2994,
+      "visit_date": "2016-08-05"
+    },
+    {
+      "total_visits": 3176,
+      "visit_date": "2016-08-04"
+    },
+    {
+      "total_visits": 2703,
+      "visit_date": "2016-08-03"
+    },
+    {
+      "total_visits": 1963,
+      "visit_date": "2016-08-02"
+    },
+    {
+      "total_visits": 1296,
+      "visit_date": "2016-08-01"
+    }
+  ]
+}
